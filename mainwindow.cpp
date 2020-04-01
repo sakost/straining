@@ -26,6 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
         return;
     }
     centrizeWindow();
+    connect(this->ui->actionAbout_Qt, SIGNAL(triggered()), QCoreApplication::instance(), SLOT(aboutQt()));
+    connect(this->ui->action_Quit, SIGNAL(triggered()), this, SLOT(close()));
 }
 
 void MainWindow::centrizeWindow(){

@@ -1,5 +1,5 @@
 #include "testcomplex.h"
 
-QVector<Day> testComplex::getSchedule(quint8 nDays){
+QVector<Day> testComplex::getSchedule(quint8){
     return {};
 }
