@@ -1,29 +1,29 @@
 #pragma once
 
+#define ALL_COMPLEXES 0
+
 #include <QObject>
 #include <QDateTime>
 #include <QSqlDatabase>
 
-//#include <complexinterface.h>
 class ComplexInterface;
-
-#include <data.h>
-
-using Day = QVector<Data*>;
 
 class Record : public QObject
 {
     Q_OBJECT
 private:
     quint64 id;
+    quint64 count;
+    quint64 relax_seconds;
+    QString type;
     QDate date;
+    QTime time;
     quint64 complex_id;
     ComplexInterface *complex;
-    Day data;
-    Record(quint64 id, QDate date, Day data, QObject *parent = nullptr);
+    Record(quint64 id, quint64 count, quint64 relax_seconds, QString type, QDate date, QTime time, quint64 complex_id, QObject *parent = nullptr);
 public:
-    static Record *createRecord(Day data, quint64 complex_id, QDate *date=Q_NULLPTR);
-    static QVector<Record> *getRecords(quint64 complex_id=0, QDate *date=Q_NULLPTR);
+    static Record *createRecord(quint64 complex_id, quint64 count=0, quint64 relax_seconds=0, QString type="", QDate *date=Q_NULLPTR, QTime *time=Q_NULLPTR);
+    static QVector<Record> *getRecords(quint64 complex_id=ALL_COMPLEXES, QDate *date=Q_NULLPTR);
 
     Record(quint64 id, QObject *parent = nullptr);
 

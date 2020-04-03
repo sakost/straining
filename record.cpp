@@ -5,13 +5,14 @@
 #include <QSqlRecord>
 #include <QDebug>
 #include <QDate>
+#include <QTime>
 
 #include <complexinterface.h>
 
 Record::Record(quint64 id,  QObject *parent) : QObject(parent)
 {
     QSqlQuery query;
-    query.prepare("SELECT complex_id, `date` FROM `record` WHERE id=? LIMIT 1;");
+    query.prepare("SELECT count, relax_seconds, type, `date`, `time`, complex_id FROM `record` WHERE id=? LIMIT 1;");
     query.bindValue(0, QVariant(id));
     qDebug() << "executing query to database: " << query.lastQuery();
     query.exec();
@@ -21,29 +22,52 @@ Record::Record(quint64 id,  QObject *parent) : QObject(parent)
         return;
     }
     this->id = id;
-    query.next();
-    this->date= query.value(1).toDate();
-    this->complex = new ComplexInterface(query.value(0).toInt());
-    query.finish();
+    if(query.first()){
+        QSqlRecord rec = query.record();
+        this->count = query.value(rec.indexOf("count")).toUInt();
+        this->relax_seconds = query.value(rec.indexOf("relax_seconds")).toUInt();
+        this->type = query.value(rec.indexOf("type")).toString();
+        this->date= query.value(rec.indexOf("date")).toDate();
+        this->time = query.value(rec.indexOf("time")).toTime();
+        this->complex = new ComplexInterface(query.value(rec.indexOf("complex_id")).toInt());
+        query.finish();
+    }else{
+        qWarning() << QString("error while selecting record with id %1").arg(id);
+    }
 }
 
-Record::Record(quint64 id, QDate date, Day data, QObject *parent): QObject(parent){
+Record::Record(quint64 id, quint64 count, quint64 relax_seconds, QString type, QDate date, QTime time, quint64 complex_id, QObject *parent) : QObject(parent){
     this->id = id;
-    this->date= date;
-    this->data = data;
+    this->count = count;
+    this->relax_seconds = relax_seconds;
+    this->type = type;
+    this->date = date;
+    this->time = time;
+    this->complex_id = complex_id;
+
+    this->complex = ComplexInterface::getComplex(this->complex_id);
 }
 
-Record* Record::createRecord(Day data, quint64 complex_id, QDate *date){
+Record* Record::createRecord(quint64 complex_id, quint64 count, quint64 relax_seconds, QString type, QDate *date, QTime *time){
     if(date == Q_NULLPTR){
         date = new QDate;
         *date = QDate::currentDate();
     }
+    if(time == Q_NULLPTR){
+        time = new QTime;
+        *time = QTime::currentTime();
+    }
     QSqlQuery query;
 
-    query.prepare("INSERT INTO record (complex_id, `date`) VALUES (?, ?)");
+    query.prepare("INSERT INTO record (count, relax_seconds, type, `date`, `time`, complex_id) VALUES (?, ?, ?, ?, ?, ?);");
 
-    query.bindValue(0, QVariant(complex_id));
-    query.bindValue(1, date->toString());
+    query.bindValue(0, count);
+    query.bindValue(1, relax_seconds);
+    query.bindValue(2, type);
+    query.bindValue(3, date->toString());
+    query.bindValue(4, time->toString());
+    query.bindValue(5, complex_id);
+    qDebug() << "executing query to database: " << query.lastQuery();
     if(!query.exec()){
         qWarning() << QString("can't insert record");
         return Q_NULLPTR;
@@ -56,13 +80,15 @@ Record* Record::createRecord(Day data, quint64 complex_id, QDate *date){
         qWarning() << "error while getting id of last record";
         return Q_NULLPTR;
     }
-    id = query.value(0).toUInt();
+    if(query.first()){
+        QSqlRecord rec = query.record();
+        id = query.value(rec.indexOf("id")).toUInt();
 
-    Record *record = new Record(id, *date, data); // warn: maybe compilation error
+        Record *record = new Record(id, count, relax_seconds, type, *date, *time, complex_id);
 
-    for(auto &set: data){
-        set->toDb(id);
+        return record;
+    } else{
+        qCritical("something went VERY wrong...");
+        return Q_NULLPTR;
     }
-
-    return record;
 }

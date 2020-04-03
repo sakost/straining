@@ -9,6 +9,8 @@
 #include <QMessageBox>
 #include <QScreen>
 
+#include <complexinterface.h>
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -45,6 +47,7 @@ bool MainWindow::initDatabase(){
     if(!path.exists()){
         path.mkpath(".");
     }
+    qInfo() << "database path: " << path.filePath("db.sqlite");
     db.setDatabaseName(path.filePath("db.sqlite"));
     if(!db.open()){
         qWarning() << db.lastError().text() << " path: " << db.databaseName();
@@ -60,31 +63,32 @@ bool MainWindow::createDatabase(){
                     "`name` TEXT UNIQUE NOT NULL"
                 ");")){
         qWarning() << "couldn't create `complex` table";
+        query.finish();
         return false;
     }
+    qDebug() << "executed query to database: " << query.lastQuery();
     if(!query.exec("CREATE TABLE IF NOT EXISTS `record`("
-                     "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-                     "`complex_id` INTEGER,"
-                     "`date` TEXT,"
-                     "FOREIGN KEY(complex_id) REFERENCES complex(id)"
+                   "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                   "`count` INTEGER DEFAULT 0 NOT NULL,"
+                   "`relax_seconds` INTEGER DEFAULT 0 NOT NULL,"
+                   "`type` TEXT DEFAULT '', /*i.o. meters or empty for reiterations*/"
+                   "`date` TEXT DEFAULT (date('now')),"
+                   "`time` TEXT DEFAULT (time('now')),"
+                   "`complex_id` INTEGER DEFAULT 1,"
+                   "FOREIGN KEY(complex_id) REFERENCES complex(id)"
                  ");")){
         qWarning() << "couldn't create `record` table";
+        query.finish();
         return false;
     }
-    if(!query.exec("CREATE TABLE IF NOT EXISTS `set`("
-                     "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
-                     "`count` INTEGER DEFAULT 0 NOT NULL,"
-                     "`relax_seconds` INTEGER NOT NULL,"
-                     "record_id INTEGER,"
-                     "`number` INTEGER NOT NULL,"
-                     "`type` TEXT, /*i.o. meters or empty for reiteration*/"
-                     "FOREIGN KEY (record_id) REFERENCES record(id)"
-                   ");")){
-        qWarning() << "couldn't create `set` table";
-        return false;
-    }
+    qDebug() << "executed query to database: " << query.lastQuery();
+    query.finish();
     return true;
 
+}
+
+bool MainWindow::initComplexes(){
+    return true; // todo initializing of complexes more easy...
 }
 
 MainWindow::~MainWindow()

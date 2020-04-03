@@ -1,11 +1,13 @@
 #pragma once
 
+#include <QObject>
 #include <complexinterface.h>
 
 
 class testComplex : public ComplexInterface
 {
 public:
-    QVector<Day> getSchedule(quint8 nDays);
+    testComplex();
+    QVector<Record> getSchedule(quint8 nDays);
 };
 

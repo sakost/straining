@@ -3,10 +3,17 @@
 #include <QApplication>
 #include <QSettings>
 #include <QDebug>
+#include <QLoggingCategory>
+
+#include "testcomplex.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    qSetMessagePattern("[%{type}] %{if-debug}(%{file}:%{line}) %{endif}- %{message}");
+#ifndef QT_DEBUG
+    QLoggingCategory::setFilterRules("*.debug=false");
+#endif
     app.setOrganizationName("sakost");
     app.setApplicationName("STraining");
     QIcon icon = QIcon(":/images/logo.ico");
@@ -19,6 +26,8 @@ int main(int argc, char *argv[])
         return -1;
     }
     w.setWindowTitle(app.applicationName());
+
+    testComplex();
 
     w.show();
     return app.exec();
