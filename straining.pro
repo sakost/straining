@@ -1,3 +1,21 @@
+# Copyright © 2020 by sakost
+#
+# This file is part of STraining, a Qt-based application for simplify trainings.
+#
+# STraining is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
 QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -15,23 +33,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += \
-    main.cpp \
-    mainwindow.cpp \
-    complexinterface.cpp \
-    record.cpp \
-    testcomplex.cpp
+SOURCES += src/*.cpp
 
-HEADERS += \
-    mainwindow.h \
-    complexinterface.h \
-    record.h \
-    testcomplex.h
+HEADERS += src/*.h
 
-FORMS += \
-    mainwindow.ui
-
-#RC_ICONS = logo.ico
+FORMS += src/*.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -40,3 +46,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     main.qrc
+
+DISTFILES += \
+    LICENSE
