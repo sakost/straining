@@ -133,7 +133,7 @@ ComplexInterface* ComplexInterface::getComplex(quint64 id){
     query.bindValue(0, id);
     qDebug() << "executing query to database: " << query.lastQuery();
     if(!query.exec()){
-        qWarning() << "error while getting comlplex data";
+        qWarning() << "error while getting complex data";
         return Q_NULLPTR;
     }
     if(query.first()){
