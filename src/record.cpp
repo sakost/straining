@@ -26,7 +26,7 @@
 #include <QDate>
 #include <QTime>
 
-#include <complexinterface.h>
+#include "complexinterface.h"
 
 Record::Record(quint64 id,  QObject *parent) : QObject(parent)
 {

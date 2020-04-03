@@ -33,11 +33,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += src/*.cpp
+SOURCES += src/complexinterface.cpp \
+           src/mainwindow.cpp \
+           src/record.cpp \
+           src/testcomplex.cpp \
+           src/main.cpp
 
-HEADERS += src/*.h
+HEADERS += src/complexinterface.h \
+           src/mainwindow.h \
+           src/record.h \
+           src/testcomplex.h
 
-FORMS += src/*.ui
+FORMS += src/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

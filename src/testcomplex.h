@@ -20,7 +20,7 @@
 #pragma once
 
 #include <QObject>
-#include <complexinterface.h>
+#include "complexinterface.h"
 
 
 class testComplex : public ComplexInterface

@@ -29,7 +29,7 @@
 #include <QMessageBox>
 #include <QScreen>
 
-#include <complexinterface.h>
+#include "complexinterface.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
