@@ -15,7 +15,7 @@ To install app into `/opt/` run with root:
 ```sh
 # make install
 ```
-And run by `/opt/straining/bin/`
+And run by `/opt/straining/bin/straining`
 ### Windows
 Try to install MinGW and [Qt](https://www.qt.io/download) 5.14.1 or greater(with GPLv3 license) toolkit and then run from command line with Administrator rights(using mingw make utility or another alternative):
 > Warning: I haven't checked this code
