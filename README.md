@@ -8,6 +8,7 @@ Now only support linux(particulary [arch linux x64](https://www.archlinux.org/) 
 First you should install an open source version of [Qt](https://www.qt.io/download) 5.14.1 or greater(with GPLv3 license) and then run this commands:
 ```sh
 $ git clone https://github.com/sakost/straining.git
+$ cd straining
 $ qmake
 $ make && make check
 ```
