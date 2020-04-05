@@ -31,15 +31,14 @@ private:
     ComplexInterface(quint64 id, const QString& uName, QObject *parent=Q_NULLPTR);
     static quint64 hasAlreadyComplex(const QString& name);
 
-    static QSet<quint64> *complexIds;
+    static QSet<ComplexInterface*> *complexes;
 
 public:
-    static QSet<quint64>& getComplexIds();
+    static QSet<ComplexInterface*>& getComplexes();
     static ComplexInterface* getComplex(quint64 id);
     static ComplexInterface* getComplex(const QString& name);
     static bool registerComplex(ComplexInterface *ci);
 
-    ComplexInterface(quint64 id, QObject *parent = nullptr);
     ~ComplexInterface(){};
 
     QString uName;

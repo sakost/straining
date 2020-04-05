@@ -29,9 +29,11 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    qSetMessagePattern("[%{type}] %{if-debug}(%{file}:%{line}) %{endif}- %{message}");
 #ifndef QT_DEBUG
     QLoggingCategory::setFilterRules("*.debug=false");
+    qSetMessagePattern("[%{type}] - %{message}");
+#else
+    qSetMessagePattern("[%{type}] (%{file}:%{line}) - %{message}");
 #endif
     app.setOrganizationName("sakost");
     app.setApplicationName("STraining");
@@ -40,13 +42,16 @@ int main(int argc, char *argv[])
     app.setWindowIcon(icon);
 
     MainWindow w;
+
+
     if(!w.initialized){
         qWarning() << "main window was not initialized";
         return -1;
     }
     w.setWindowTitle(app.applicationName());
 
-    testComplex();
+    testComplex t; // todo initializing of complexes more easy...
+    w.loadComplexes();
 
     w.show();
     return app.exec();

@@ -48,7 +48,7 @@ Record::Record(quint64 id,  QObject *parent) : QObject(parent)
         this->type = query.value(rec.indexOf("type")).toString();
         this->date= query.value(rec.indexOf("date")).toDate();
         this->time = query.value(rec.indexOf("time")).toTime();
-        this->complex = new ComplexInterface(query.value(rec.indexOf("complex_id")).toInt());
+        this->complex = ComplexInterface::getComplex(query.value(rec.indexOf("complex_id")).toInt());
         query.finish();
     }else{
         qWarning() << QString("error while selecting record with id %1").arg(id);

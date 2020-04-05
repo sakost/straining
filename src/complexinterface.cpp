@@ -25,14 +25,14 @@
 #include <QDebug>
 
 
-QSet<quint64> *ComplexInterface::complexIds = Q_NULLPTR;
+QSet<ComplexInterface*> *ComplexInterface::complexes = Q_NULLPTR;
 const QString invalidName = "<NULL>";
 
-QSet<quint64>& ComplexInterface::getComplexIds(){
-    if(ComplexInterface::complexIds == Q_NULLPTR){
-        ComplexInterface::complexIds = new QSet<quint64>;
+QSet<ComplexInterface*>& ComplexInterface::getComplexes(){
+    if(ComplexInterface::complexes == Q_NULLPTR){
+        ComplexInterface::complexes = new QSet<ComplexInterface*>;
     }
-    return *ComplexInterface::complexIds;
+    return *ComplexInterface::complexes;
 }
 
 ComplexInterface::ComplexInterface(quint64 id, const QString& uName, QObject *parent):QObject(parent){
@@ -40,50 +40,19 @@ ComplexInterface::ComplexInterface(quint64 id, const QString& uName, QObject *pa
     this->uName = uName;
 }
 
-ComplexInterface::ComplexInterface(quint64 id, QObject *parent) : QObject(parent){
-    this->id = id;
-
-    QSqlQuery query;
-    query.prepare("SELECT name FROM `complex` WHERE id=? LIMIT 1;");
-    query.bindValue(0, QVariant(id));
-    qDebug() << "executing query to database: " << query.lastQuery();
-    if(!query.exec()){
-        qWarning() << QString("error while selecting complex with id %1").arg(id);
-        query.finish();
-        this->uName = invalidName;
-        return;
-    }
-
-//    if(query.size() < 1){
-//        qWarning() << QString("complex with id %1 was not found").arg(id);
-//        query.finish();
-//        this->uName = invalidName;
-//        return;
-//    }
-    if(query.first()){
-        QSqlRecord rec = query.record();
-        this->uName = query.value(rec.indexOf("name")).toString();
-    }else{
-        this->uName = invalidName;
-        qWarning() << QString("there is no complex with id %1").arg(id);
-    }
-    query.finish();
-}
 
 
 bool ComplexInterface::registerComplex(ComplexInterface *ci){
-    if(!dynamic_cast<ComplexInterface*>(ci)){
-        return false;
-    }
-    ci = dynamic_cast<ComplexInterface*>(ci);
     quint64 id;
     if((id = ComplexInterface::hasAlreadyComplex(ci->uName)) > 0){
         ci->id = id;
-        return ci;
+        ComplexInterface::getComplexes().insert(ci);
+        qInfo() << QString("complex '%1' was already set up(id %2)").arg(ci->uName).arg(ci->id);
+        return true;
     }
     QSqlQuery query;
-    query.prepare("INSERT INTO complex (name) VALUES (:uName);");
-    query.bindValue(":uName", ci->uName);
+    query.prepare("INSERT INTO complex (name) VALUES (?);");
+    query.bindValue(0, ci->uName);
     qDebug() << "executing query to database: " << query.lastQuery();
     if(!query.exec()){
         qWarning() << "error while registering complex";
@@ -101,8 +70,8 @@ bool ComplexInterface::registerComplex(ComplexInterface *ci){
         ci->id = query.value(record.indexOf("id")).toUInt();
         query.finish();
 
-        ComplexInterface::getComplexIds().insert(ci->id);
-
+        ComplexInterface::getComplexes().insert(ci);
+        qInfo() << QString("registered complex '%1' with id %2").arg(ci->uName).arg(ci->id);
         return true;
     } else{
         qFatal("smth went VERY wrong...");

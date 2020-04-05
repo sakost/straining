@@ -21,22 +21,25 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <algorithm>
+
+#include <QtDebug>
 #include <QStandardPaths>
 #include <QDir>
-#include <QtDebug>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <QScreen>
+#include <QVariant>
 
 #include "complexinterface.h"
+#include "configurecomplexesdialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    settings = new QSettings(QSettings::UserScope);
     if(!initDatabase()){
         QString msg = "database weren't initialized correctly";
         qCritical() << msg;
@@ -50,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
     centrizeWindow();
     connect(this->ui->actionAbout_Qt, SIGNAL(triggered()), QCoreApplication::instance(), SLOT(aboutQt()));
     connect(this->ui->action_Quit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(this->ui->actionConfigure_complexes, SIGNAL(triggered()), this, SLOT(configureComplexes()));
 }
 
 void MainWindow::centrizeWindow(){
@@ -107,15 +111,28 @@ bool MainWindow::createDatabase(){
 
 }
 
-bool MainWindow::initComplexes(){
-    return true; // todo initializing of complexes more easy...
+void MainWindow::loadComplexes(){
+    QSet<ComplexInterface*> complexes = ComplexInterface::getComplexes();
+    for (auto el: complexes) {
+        if(el != Q_NULLPTR){
+            complexesChecked.push_back({el, (settings.value("complexes/" + el->uName, QVariant(false)).toBool())});
+            settings.setValue("complexes/" + el->uName, complexesChecked.back().second);
+        } else{
+            qCritical() << "something went wrong...";
+        }
+    }
+    std::sort(complexesChecked.begin(), complexesChecked.end());
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete settings;
     if(db.isOpen())
         db.close();
 }
 
+
+void MainWindow::configureComplexes(){
+    ConfigureComplexesDialog dialog(complexesChecked, this);
+    dialog.exec();
+}

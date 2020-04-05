@@ -23,6 +23,8 @@
 #include <QSettings>
 #include <QSqlDatabase>
 
+#include "complexinterface.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -31,18 +33,23 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 private:
-    QSettings *settings;
+    QSettings settings;
     QSqlDatabase db;
+    QVector< QPair< ComplexInterface*, bool > > complexesChecked;
+
     bool initDatabase();
     bool createDatabase();
-    bool initComplexes();
     void centrizeWindow();
 
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     bool initialized = true;
+    void loadComplexes();
 
 private:
     Ui::MainWindow *ui;
+
+public slots:
+    void configureComplexes();
 };

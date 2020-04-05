@@ -20,12 +20,12 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="tab">
+      <widget class="QWidget" name="exercisesTab">
        <attribute name="title">
         <string>Excercises</string>
        </attribute>
       </widget>
-      <widget class="QWidget" name="tab_2">
+      <widget class="QWidget" name="scheduleTab">
        <attribute name="title">
         <string>Schedule</string>
        </attribute>
@@ -53,6 +53,7 @@
      <string>&amp;File</string>
     </property>
     <addaction name="action_Clear_user_info"/>
+    <addaction name="actionConfigure_complexes"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -81,6 +82,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionConfigure_complexes">
+   <property name="text">
+    <string>Configure complexes</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
  </widget>
