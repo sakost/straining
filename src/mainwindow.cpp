@@ -50,6 +50,10 @@ MainWindow::MainWindow(QWidget *parent)
         initialized = false;
         return;
     }
+#ifdef QT_DEBUG
+    settings.clear();
+    qWarning() << "clearing settings";
+#endif
     centrizeWindow();
     connect(this->ui->actionAbout_Qt, SIGNAL(triggered()), QCoreApplication::instance(), SLOT(aboutQt()));
     connect(this->ui->action_Quit, SIGNAL(triggered()), this, SLOT(close()));
@@ -111,8 +115,10 @@ bool MainWindow::createDatabase(){
 
 }
 
-void MainWindow::loadComplexes(){
+void MainWindow::syncComplexesChecked(){
+    qDebug() << "syncing complexes checked";
     QSet<ComplexInterface*> complexes = ComplexInterface::getComplexes();
+    complexesChecked.clear();
     for (auto el: complexes) {
         if(el != Q_NULLPTR){
             complexesChecked.push_back({el, (settings.value("complexes/" + el->uName, QVariant(false)).toBool())});
@@ -134,5 +140,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::configureComplexes(){
     ConfigureComplexesDialog dialog(complexesChecked, this);
-    dialog.exec();
+    if(dialog.exec() == QDialog::Accepted){
+        for(auto &el: dialog.complexes){
+            settings.setValue("complexes/" + el->text(), el->isChecked());
+            syncComplexesChecked();
+        }
+    }
 }

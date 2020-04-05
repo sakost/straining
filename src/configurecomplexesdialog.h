@@ -18,12 +18,12 @@ class ConfigureComplexesDialog : public QDialog
 public:
     explicit ConfigureComplexesDialog(const QVector< QPair<ComplexInterface*, bool> >& complexes, QWidget *parent = nullptr);
     ~ConfigureComplexesDialog();
+    QVector< QCheckBox* > complexes;
 
 protected:
     void changeEvent(QEvent *e);
 
 private:
     Ui::ConfigureComplexesDialog *ui;
-    QVector< QCheckBox* > complexes;
 };
 

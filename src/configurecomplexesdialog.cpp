@@ -16,6 +16,7 @@ ConfigureComplexesDialog::ConfigureComplexesDialog(const QVector< QPair<ComplexI
         QHBoxLayout *hLayout = new QHBoxLayout;
         QCheckBox* checkBox = new QCheckBox(el.first->uName);
         checkBox->setChecked(el.second);
+        this->complexes.push_back(checkBox);
         hLayout->addWidget(checkBox);
         hLayout->setSizeConstraint(QLayout::SetMinimumSize);
         vLayout->addLayout(hLayout);

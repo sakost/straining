@@ -45,7 +45,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     bool initialized = true;
-    void loadComplexes();
+    void syncComplexesChecked();
 
 private:
     Ui::MainWindow *ui;

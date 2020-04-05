@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     w.setWindowTitle(app.applicationName());
 
     testComplex t; // todo initializing of complexes more easy...
-    w.loadComplexes();
+    w.syncComplexesChecked();
 
     w.show();
     return app.exec();
